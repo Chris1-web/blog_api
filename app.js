@@ -14,6 +14,9 @@ async function main() {
   await mongoose.connect(mongoDB);
 }
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use("/api", apiRouter);
 
 app.listen(PORT, () => {
