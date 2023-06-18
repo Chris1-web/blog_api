@@ -2,8 +2,26 @@ const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 
-exports.user_get = (req, res) => {
-  res.json({ message: "User List gotten successfully!..." });
+// display all users***
+exports.user_get = async (req, res) => {
+  const { page } = req.query;
+  const options = {
+    select: "username",
+    page: parseInt(page, 10) || 1,
+    limit: 3,
+  };
+
+  User.paginate({}, options).then((results, error) => {
+    if (error) {
+      res.status(500).json({ error });
+    }
+    // pass totalPages number along with the results
+    res.status(200).json({
+      users: results.docs,
+      page_count: results.totalPages,
+      current_page: results.page,
+    });
+  });
 };
 
 exports.user_post = [
