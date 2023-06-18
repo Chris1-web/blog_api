@@ -25,7 +25,16 @@ exports.user_get = async (req, res) => {
 };
 
 exports.user_post = [
-  body("username", "username is required").trim().isLength({ min: 1 }).escape(),
+  body("username", "username is required")
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .custom(async (value) => {
+      // check if a username exists in database
+      const existingUser = await User.findOne({ username: value });
+      if (existingUser) throw new Error("This username is not available");
+      return value;
+    }),
   body("password", "password is required").trim().isLength({ min: 1 }).escape(),
   (req, res) => {
     const { username, password } = req.body;
@@ -36,7 +45,7 @@ exports.user_post = [
       });
       return;
     }
-    // if there is no error, create user in database and
+    // if there is no error, create user in database with hashed password
     bcrypt.hash(password, 10, async (error, hashedPassword) => {
       try {
         const user = new User({
