@@ -1,5 +1,6 @@
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
 // display all users***
@@ -58,5 +59,38 @@ exports.user_post = [
         res.status(500).json({ error });
       }
     });
+  },
+];
+
+exports.user_login = [
+  body("username", "username is required").trim().isLength({ min: 1 }).escape(),
+  body("password", "password is required").trim().isLength({ min: 1 }).escape(),
+  async (req, res) => {
+    const { username, password } = req.body;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
+      return;
+    }
+    try {
+      // check if user exists
+      const user = await User.findOne({ username });
+      if (!user) throw new Error("Invalid Username or password");
+      // check if password matches user hashed one
+      const passwordcheck = await bcrypt.compare(password, user.password);
+      if (!passwordcheck) throw new Error("Invalid Username or Password");
+      // generate token
+      jwt.sign(
+        JSON.parse(JSON.stringify(user)),
+        process.env.JWT_SECRET,
+        { expiresIn: 60 },
+        (err, token) => {
+          if (err) throw new Error("Invalid Username or password");
+          res.status(200).json({ token });
+        }
+      );
+    } catch (error) {
+      res.status(400).json({ errors: [{ msg: error.message }] });
+    }
   },
 ];
