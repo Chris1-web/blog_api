@@ -2,32 +2,7 @@ const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const user = require("../models/user");
-
-function verifyToken(req, res, next) {
-  // check if header has authorization with correct token
-  // get token from header
-  const { authorization } = req.headers;
-  if (authorization !== undefined) {
-    const bearerToken = authorization.split(" ")[1];
-    jwt.verify(bearerToken, process.env.JWT_SECRET, (err, userData) => {
-      if (err) {
-        res.status(403).json({ err });
-      } else {
-        // store user in req.user to be accessible to route
-        const user = {
-          _id: userData._id,
-          username: userData.username,
-          blog: userData.blog,
-        };
-        req.user = user;
-        next();
-      }
-    });
-  } else {
-    res.status(403).json({ message: "Forbidden" });
-  }
-}
+const verifyToken = require("../verifyToken");
 
 // display all users***
 exports.user_get = [
@@ -117,7 +92,7 @@ exports.user_login = [
       jwt.sign(
         JSON.parse(JSON.stringify(user)),
         process.env.JWT_SECRET,
-        { expiresIn: 60 },
+        { expiresIn: 120 },
         (err, token) => {
           if (err) throw new Error("Invalid Username or password");
           res.status(200).json({ token });
