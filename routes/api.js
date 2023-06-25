@@ -13,6 +13,7 @@ router.get("/", (req, res) => {
 router.get("/user", userController.user_get);
 router.post("/user", userController.user_post);
 router.post("/user/login", userController.user_login);
+//get individual users with their posts
 
 // post
 router.get("/post", postController.post_list);
@@ -20,6 +21,6 @@ router.post("/post", postController.post_post);
 router.get("/post/:postid", postController.post_detail);
 
 // comment
-// router.post("post/:postid/comment", commentController.comment_post);
+router.post("/post/:postid/comment", commentController.comment_post);
 
 module.exports = router;
