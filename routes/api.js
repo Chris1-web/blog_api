@@ -3,6 +3,7 @@ const router = express.Router();
 
 const userController = require("../controllers/userController");
 const postController = require("../controllers/postController");
+const commentController = require("../controllers/commentController");
 
 router.get("/", (req, res) => {
   res.json({ message: "Api home page..." });
@@ -16,5 +17,9 @@ router.post("/user/login", userController.user_login);
 // post
 router.get("/post", postController.post_list);
 router.post("/post", postController.post_post);
+router.get("/post/:postid", postController.post_detail);
+
+// comment
+// router.post("post/:postid/comment", commentController.comment_post);
 
 module.exports = router;
