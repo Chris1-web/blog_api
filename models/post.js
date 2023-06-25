@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 const PostSchema = new Schema({
   title: { type: String, minLength: 3, maxLength: 100 },
@@ -8,6 +9,8 @@ const PostSchema = new Schema({
   author: { type: Schema.Types.ObjectId, ref: "User", required: true },
   published: { type: Boolean, required: true, default: true },
 });
+
+PostSchema.plugin(mongoosePaginate);
 
 PostSchema.virtual("url").get(function () {
   return `/post/${this._id}`;

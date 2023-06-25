@@ -92,7 +92,7 @@ exports.user_login = [
       jwt.sign(
         JSON.parse(JSON.stringify(user)),
         process.env.JWT_SECRET,
-        { expiresIn: 120 },
+        { expiresIn: "7h" },
         (err, token) => {
           if (err) throw new Error("Invalid Username or password");
           res.status(200).json({ token });

@@ -5,12 +5,27 @@ const verifyToken = require("../verifyToken");
 exports.post_list = [
   verifyToken,
   async (req, res) => {
-    try {
-      const posts = await Post.find({}).populate("author", "username blog");
-      res.status(200).json({ posts });
-    } catch (error) {
-      res.status(500).json({ error });
-    }
+    const { page } = req.query;
+    const options = {
+      populate: {
+        path: "author",
+        select: "username blog",
+      },
+      page: parseInt(page, 10) || 1,
+      limit: 3,
+    };
+    Post.paginate({}, options).then((results, error) => {
+      if (error) {
+        res.status(500).json({ error });
+      }
+      // pass totalPages number along with the results
+      res.status(200).json({
+        posts: results.docs,
+        page_count: results.totalPages,
+        current_page: results.page,
+        activeUser: req.user,
+      });
+    });
   },
 ];
 
