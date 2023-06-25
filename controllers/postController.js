@@ -2,6 +2,18 @@ const { body, validationResult } = require("express-validator");
 const Post = require("../models/post");
 const verifyToken = require("../verifyToken");
 
+exports.post_list = [
+  verifyToken,
+  async (req, res) => {
+    try {
+      const posts = await Post.find({}).populate("author", "username blog");
+      res.status(200).json({ posts });
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  },
+];
+
 exports.post_post = [
   verifyToken,
   body("title", "title is requires").trim().isLength({ min: 3 }).escape(),
