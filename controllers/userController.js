@@ -2,6 +2,7 @@ const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+const Post = require("../models/post");
 const verifyToken = require("../verifyToken");
 
 // display all users***
@@ -100,6 +101,20 @@ exports.user_login = [
       );
     } catch (error) {
       res.status(400).json({ errors: [{ msg: error.message }] });
+    }
+  },
+];
+
+exports.user_detail = [
+  verifyToken,
+  async (req, res) => {
+    const { userid } = req.params;
+    try {
+      const user = await User.findById(userid, "username blog");
+      const posts = await Post.find({ author: userid });
+      res.status(200).json({ user, posts });
+    } catch (error) {
+      res.status(500).json({ error: { message: "Error getting user data" } });
     }
   },
 ];

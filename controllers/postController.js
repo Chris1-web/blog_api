@@ -64,15 +64,18 @@ exports.post_post = [
   },
 ];
 
-exports.post_detail = async (req, res) => {
-  const { postid } = req.params;
-  try {
-    const post = await Post.findById(postid).populate(
-      "author",
-      "username blog"
-    );
-    res.json({ post });
-  } catch (error) {
-    res.json({ error });
-  }
-};
+exports.post_detail = [
+  verifyToken,
+  async (req, res) => {
+    const { postid } = req.params;
+    try {
+      const post = await Post.findById(postid).populate(
+        "author",
+        "username blog"
+      );
+      res.json({ post });
+    } catch (error) {
+      res.json({ error });
+    }
+  },
+];

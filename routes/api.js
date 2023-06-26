@@ -14,7 +14,6 @@ router.get("/user", userController.user_get);
 router.post("/user", userController.user_post);
 router.post("/user/login", userController.user_login);
 router.get("/user/:userid", userController.user_detail);
-//get individual users with their posts
 
 // post
 router.get("/post", postController.post_list);
