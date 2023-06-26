@@ -30,3 +30,17 @@ exports.comment_post = [
     }
   },
 ];
+
+exports.comment_list = [
+  async (req, res) => {
+    const { postid } = req.params;
+    try {
+      const comments = await Comment.find({ post: postid })
+        .populate("author", "username blog")
+        .populate("post", "title date author");
+      res.status(200).json({ comments });
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  },
+];
