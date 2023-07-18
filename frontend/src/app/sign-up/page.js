@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 import style from "./page.module.css";
 
 export default function SignUp() {
@@ -8,17 +9,7 @@ export default function SignUp() {
   const [blog, setBlog] = useState("");
   const [password, setPassword] = useState("");
 
-  function changeUsername(e) {
-    setUsername(e.target.value);
-  }
-
-  function changeBlog(e) {
-    setBlog(e.target.value);
-  }
-
-  function changePassword(e) {
-    setPassword(e.target.value);
-  }
+  const router = useRouter();
 
   async function Signup(e) {
     e.preventDefault();
@@ -31,18 +22,20 @@ export default function SignUp() {
         },
         body: JSON.stringify(data),
       });
-      // if there is an error throw error
+      // if there response is not okay, throw error
       if (!response.ok) {
-        const text = await response.text();
-        throw new Error(text);
+        const text = await response.json();
+        throw new Error(JSON.stringify(text));
       }
-      // else, return result
+
+      // if response is okay, return result, redirect to sign in page
       const result = await response.json();
-      console.log(result);
+      toast.success(result.message);
+      router.push("/sign-in");
     } catch (error) {
-      const errorsMessages = JSON.parse(error.message);
-      errorsMessages.errors.forEach((message) => {
-        toast(message.msg);
+      const parsedError = JSON.parse(error.message);
+      parsedError.errors.forEach((message) => {
+        toast.error(message.msg);
       });
     }
   }
@@ -50,7 +43,21 @@ export default function SignUp() {
   return (
     <div className={style.sign_up}>
       <h1>Sign Up</h1>
-      <Toaster />
+      <Toaster
+        toastOptions={{
+          success: {
+            style: {
+              background: "green",
+            },
+          },
+          error: {
+            style: {
+              border: "2px solid red",
+              fontSize: "20px",
+            },
+          },
+        }}
+      />
       <form className={style.form} onSubmit={Signup}>
         <div>
           <label>Username</label>
@@ -58,7 +65,7 @@ export default function SignUp() {
             className={style.input}
             type="text"
             value={username}
-            onChange={changeUsername}
+            onChange={(e) => setUsername(e.target.value)}
           />
         </div>
         <div>
@@ -67,7 +74,7 @@ export default function SignUp() {
             className={style.input}
             type="text"
             value={blog}
-            onChange={changeBlog}
+            onChange={(e) => setBlog(e.target.value)}
           />
         </div>
         <div>
@@ -76,7 +83,7 @@ export default function SignUp() {
             className={style.input}
             type="password"
             value={password}
-            onChange={changePassword}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
         <button>Sign Up</button>
