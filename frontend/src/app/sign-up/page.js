@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Toast from "react-hot-toast";
 import style from "./page.module.css";
 
 export default function SignUp() {
