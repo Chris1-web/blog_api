@@ -1,0 +1,28 @@
+.nav,
+.nav ul {
+  display: flex;
+  font-size: 2rem;
+}
+
+.nav {
+  justify-content: space-between;
+  margin: 2rem 0;
+}
+
+.nav ul {
+  gap: 2rem;
+}
+
+.nav a {
+  text-decoration: none;
+  color: black;
+}
+
+.nav ul li {
+  border: 0.2rem solid white;
+  padding: 0.3rem 1.5rem;
+}
+
+.nav ul li:nth-child(2) {
+  border: 0.2rem solid blue;
+}
