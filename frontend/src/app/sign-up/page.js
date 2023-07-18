@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import style from "./page.module.css";
 
 export default function SignUp() {
@@ -31,17 +31,26 @@ export default function SignUp() {
         },
         body: JSON.stringify(data),
       });
+      // if there is an error throw error
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text);
+      }
+      // else, return result
       const result = await response.json();
       console.log(result);
     } catch (error) {
-      console.log(error.message);
+      const errorsMessages = JSON.parse(error.message);
+      errorsMessages.errors.forEach((message) => {
+        toast(message.msg);
+      });
     }
-    console.log(data);
   }
 
   return (
     <div className={style.sign_up}>
       <h1>Sign Up</h1>
+      <Toaster />
       <form className={style.form} onSubmit={Signup}>
         <div>
           <label>Username</label>
