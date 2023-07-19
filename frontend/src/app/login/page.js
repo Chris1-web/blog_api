@@ -29,7 +29,6 @@ export default function Login() {
 
       // is user is logged in, store generated token in
       const result = await response.json();
-      console.log(result);
       toast.success("user logged in successfully");
       localStorage.setItem("token", JSON.stringify(result.token));
       router.push("/");

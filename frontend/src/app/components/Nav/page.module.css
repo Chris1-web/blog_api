@@ -26,3 +26,8 @@
 .nav ul li:nth-child(2) {
   border: 0.2rem solid blue;
 }
+
+.nav .userProfile a {
+  text-decoration: underline;
+  color: blue;
+}
