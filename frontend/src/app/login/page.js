@@ -4,18 +4,17 @@ import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import style from "./page.module.css";
 
-export default function SignUp() {
+export default function Login() {
   const [username, setUsername] = useState("");
-  const [blog, setBlog] = useState("");
   const [password, setPassword] = useState("");
 
   const router = useRouter();
 
-  async function Signup(e) {
+  async function Login(e) {
     e.preventDefault();
-    const data = { username, blog, password };
+    const data = { username, password };
     try {
-      const response = await fetch("http://localhost:3001/api/user", {
+      const response = await fetch("http://localhost:3001/api/user/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -28,10 +27,12 @@ export default function SignUp() {
         throw new Error(JSON.stringify(text));
       }
 
-      // if response is okay, return result, redirect to sign in page
+      // is user is logged in, store generated token in
       const result = await response.json();
-      toast.success(result.message);
-      router.push("/sign-in");
+      console.log(result);
+      toast.success("user logged in successfully");
+      localStorage.setItem("token", JSON.stringify(result.token));
+      router.push("/");
     } catch (error) {
       const parsedError = JSON.parse(error.message);
       parsedError.errors.forEach((message) => {
@@ -41,8 +42,8 @@ export default function SignUp() {
   }
 
   return (
-    <div className={style.sign_up}>
-      <h1>Sign Up</h1>
+    <div className={style.login}>
+      <h1>Log In</h1>
       <Toaster
         toastOptions={{
           success: {
@@ -58,7 +59,7 @@ export default function SignUp() {
           },
         }}
       />
-      <form className={style.form} onSubmit={Signup}>
+      <form className={style.form} onSubmit={Login}>
         <div>
           <label>Username</label>
           <input
@@ -66,15 +67,6 @@ export default function SignUp() {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-        <div>
-          <label>Genre</label>
-          <input
-            className={style.input}
-            type="text"
-            value={blog}
-            onChange={(e) => setBlog(e.target.value)}
           />
         </div>
         <div>
@@ -86,7 +78,7 @@ export default function SignUp() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <button>Sign Up</button>
+        <button>Log In</button>
       </form>
     </div>
   );
